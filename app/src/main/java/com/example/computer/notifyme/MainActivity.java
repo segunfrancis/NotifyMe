@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonNotify;
     private Button buttonCancel;
     private Button buttonUpdate;
+    private Button buttonInboxStyleUpdate;
 
     private NotificationManager mNotifyManager;
     private NotificationReceiver mReceiver = new NotificationReceiver();
@@ -58,18 +59,28 @@ public class MainActivity extends AppCompatActivity {
                 updateNotification();
             }
         });
+
+        buttonInboxStyleUpdate = findViewById(R.id.inbox_style_update);
+        buttonInboxStyleUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inboxStyleUpdateNotification();
+            }
+        });
+
         // register broadcast receiver
         registerReceiver(mReceiver, new IntentFilter(ACTION_UPDATE_NOTIFICATION));
 
         createNotificationChannel();
-        setNotificationButtonState(true, false, false);
+        setNotificationButtonState(true, false, false, false);
     }
 
     // Toggle button state
-    void setNotificationButtonState(Boolean isNotifyEnabled, Boolean isUpdateEnabled, Boolean isCancelEnabled) {
+    void setNotificationButtonState(Boolean isNotifyEnabled, Boolean isUpdateEnabled, Boolean isCancelEnabled, Boolean isInboxStyleEnabled) {
         buttonNotify.setEnabled(isNotifyEnabled);
         buttonUpdate.setEnabled(isUpdateEnabled);
         buttonCancel.setEnabled(isCancelEnabled);
+        buttonInboxStyleUpdate.setEnabled(isInboxStyleEnabled);
     }
 
     public void sendNotification() {
@@ -79,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         NotificationCompat.Builder notifyBuilder = getNotificationBuilder();
         notifyBuilder.addAction(R.drawable.ic_update, "Update Notification", updatePendingIntent);
         mNotifyManager.notify(NOTIFICATION_ID, notifyBuilder.build());
-        setNotificationButtonState(false, true, true);
+        setNotificationButtonState(false, true, true, true);
     }
 
     public void createNotificationChannel() {
@@ -124,12 +135,22 @@ public class MainActivity extends AppCompatActivity {
         notifyBuilder.setStyle(new NotificationCompat.BigPictureStyle()
                 .bigPicture(androidImage).setBigContentTitle("Notification Updated!"));
         mNotifyManager.notify(NOTIFICATION_ID, notifyBuilder.build());
-        setNotificationButtonState(false, false, true);
+        setNotificationButtonState(false, false, true, false);
+    }
+
+    public void inboxStyleUpdateNotification() {
+        NotificationCompat.Builder notifyBuilder = getNotificationBuilder();
+        notifyBuilder.setStyle(new NotificationCompat.InboxStyle()
+                .addLine("First Line").addLine("Second Line").addLine("Third Line")
+                .setBigContentTitle("Notification Updated!")
+                .setSummaryText("The inbox style notification looks like"));
+        mNotifyManager.notify(NOTIFICATION_ID, notifyBuilder.build());
+        setNotificationButtonState(false, false, true, false);
     }
 
     public void cancelNotification() {
         mNotifyManager.cancel(NOTIFICATION_ID);
-        setNotificationButtonState(true, false, false);
+        setNotificationButtonState(true, false, false, true);
     }
 
     @Override

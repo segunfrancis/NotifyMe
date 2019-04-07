@@ -3,4 +3,5 @@
     <string name="notify_me">Notify Me!</string>
     <string name="update_me">Update Me!</string>
     <string name="cancel_me">Cancel Me!</string>
+    <string name="inbox_style_update">inbox-style update</string>
 </resources>
